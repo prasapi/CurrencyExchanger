@@ -16,6 +16,7 @@ model_name = "openai/gpt-4o-mini"
 os.environ["LANGCHAIN_TRACING_V2"]= "true"
 os.getenv('LANGCHAIN_APIKEY')
 os.environ["LANGCHAIN_PROJECT"] = "currencyexchanger"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 load_dotenv()
 excr_key =os.getenv('EXCHANGERATE_API_KEY')
 # Define a function tool that the model can ask to invoke in order to retrieve flight information

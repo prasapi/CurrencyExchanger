@@ -6,13 +6,16 @@ from dotenv import load_dotenv
 import json
 import streamlit as st
 from openai import OpenAI
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
 
 token = os.environ["GITHUB_TOKEN"]
 endpoint = "https://models.github.ai/inference"
 model_name = "openai/gpt-4o-mini"
 
-
-
+os.environ["LANGCHAIN_TRACING_V2"]= "true"
+os.environ["LANGCHAIN_APIKEY"] = os.getenv('LANGCHAIN_APIKEY')
+os.environ["LANGCHAIN_PROJECT"] = "currencyexchanger"
 load_dotenv()
 excr_key =os.getenv('EXCHANGERATE_API_KEY')
 # Define a function tool that the model can ask to invoke in order to retrieve flight information
@@ -49,6 +52,7 @@ client = OpenAI(
     base_url=endpoint,
     api_key=token
 )
+@traceable
 def get_exchange_rate(base: str, target: str, amount: str) -> Tuple:
     url = f"https://v6.exchangerate-api.com/v6/{excr_key}/pair/{base}/{target}/{amount}"
     res = requests.get(url)
@@ -60,7 +64,7 @@ def get_exchange_rate(base: str, target: str, amount: str) -> Tuple:
         print(res.content)
     return (base,target,amount,f'{resjson["conversion_result"]:.2f}')
     pass
-
+@traceable
 def call_llm(textbox_input) -> Dict:
     """Make a call to the LLM with the textbox_input as the prompt.
        The output from the LLM should be a JSON (dict) with the base, amount and target"""
@@ -87,7 +91,7 @@ def call_llm(textbox_input) -> Dict:
     else:
         print(response.choices[0].message.content)
         return response#.choices[0].message.content
-
+@traceable
 def run_pipeline(user_input):
     """Based on textbox_input, determine if you need to use the tools (function calling) for the LLM.
     Call get_exchange_rate(...) if necessary"""

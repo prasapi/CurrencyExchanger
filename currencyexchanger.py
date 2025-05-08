@@ -14,7 +14,7 @@ endpoint = "https://models.github.ai/inference"
 model_name = "openai/gpt-4o-mini"
 
 os.environ["LANGCHAIN_TRACING_V2"]= "true"
-os.environ["LANGCHAIN_APIKEY"] = os.getenv('LANGCHAIN_APIKEY')
+os.getenv('LANGCHAIN_APIKEY')
 os.environ["LANGCHAIN_PROJECT"] = "currencyexchanger"
 load_dotenv()
 excr_key =os.getenv('EXCHANGERATE_API_KEY')
